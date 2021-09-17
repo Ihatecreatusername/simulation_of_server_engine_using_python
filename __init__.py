@@ -1,38 +1,31 @@
 #-*- coding:utf-8 -*-
 import traceback
 import log
-
-def OnlineUpdate(sCommand):
-    sModule = sCommand.split(" ")[1]
-    import update
-    log.log_file("update", "update_version %s: %s" % (update.g_Version, sCommand))
-    update.g_Version += 1
-
-    exec("""
-import importlib
-
-import update
-importlib.reload(update)
-
-import %s
-update.UpdateCallBefore()
-importlib.reload(%s)
-update.UpdateCallBack()
-
-""" % (sModule, sModule))
+import platform
 
 def Quit(sCommand):
-    log.log_file("start", "quit")
+    log.log_file("system", "quit")
     import os
     import signal
     os.kill(os.getpid(), signal.SIGINT)
 
 if __name__ == "__main__":
     log.Init()
-    log.log_file("start", "start")
+    log.log_file("system", "system start")
+
+    import update
+    import task
+    
+    task.Init()
+
+    if platform.system() == "Windows":
+        import mywatchdog
+        mywatchdog.Init()
+
+    log.log_file("system", "system init done")
 
     dCommandHandleFunc = {
-        "update"    :   OnlineUpdate,
+        "update"    :   update.UpdateOnce,
         "quit"      :   Quit,
     }
 
