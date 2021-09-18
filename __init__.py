@@ -1,7 +1,9 @@
 #-*- coding:utf-8 -*-
 import traceback
-import log
 import platform
+
+import log
+import command
 
 def Quit(sCommand):
     log.log_file("system", "quit")
@@ -13,7 +15,6 @@ if __name__ == "__main__":
     log.Init()
     log.log_file("system", "system start")
 
-    import update
     import task
     
     task.Init()
@@ -24,16 +25,11 @@ if __name__ == "__main__":
 
     log.log_file("system", "system init done")
 
-    dCommandHandleFunc = {
-        "update"    :   update.UpdateOnce,
-        "quit"      :   Quit,
-    }
-
     while True:
         try:
             sCommand = input()
             lstCommand = sCommand.split(" ")
-            oFunc = dCommandHandleFunc.get(lstCommand[0])
+            oFunc = getattr(command, lstCommand[0])
             if oFunc:
                 oFunc(sCommand)
         except:

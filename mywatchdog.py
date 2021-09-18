@@ -20,7 +20,6 @@ class FileEventHandler(FileSystemEventHandler):
 
     def on_modified(self, event):
         if event.src_path[-3:] != ".py":
-            log.log_file("update", "fail auto update {0}".format(event.src_path))
             return
         global g_WatchdogCount
         if g_WatchdogCount % 2: #watchdog 检测修改会检测备份文件，所以会操作更新两次
