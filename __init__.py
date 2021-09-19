@@ -1,6 +1,9 @@
 #-*- coding:utf-8 -*-
 import traceback
 import platform
+import time
+
+from numpy.lib.function_base import sort_complex
 
 import log
 import command
@@ -27,13 +30,18 @@ if __name__ == "__main__":
 
     while True:
         try:
-            sCommand = input()
-            lstCommand = sCommand.split(" ")
-            oFunc = getattr(command, lstCommand[0])
-            if oFunc:
-                oFunc(sCommand)
+            lstWaiting = command.readcommand()
+            if lstWaiting:
+                for sUser, sCommand in lstWaiting:
+                    lstCommand = sCommand.split(" ")
+                    oFunc = getattr(command, lstCommand[0])
+                    if oFunc:
+                        log.log_file("command", "{0} exec: {1}".format(sUser, sCommand))
+                        oFunc(sCommand)
+
         except:
             msg = traceback.format_exc()
             print(msg)
             log.log_file("err", msg)
+        time.sleep(0.1)
 

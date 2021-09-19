@@ -1,7 +1,8 @@
 #-*- coding:utf-8 -*-
+import platform
 import log
 
-__all__ = ['man', 'showall', 'quit', 'update']
+__all__ = ['man', 'showall', 'quit', 'update', 'readcommand']
 
 def _stdout(func):
     def wrapstdout(*arg, **kwargs):
@@ -48,3 +49,29 @@ def update(sCommand):
     """
     import update
     update.UpdateOnce(sCommand)
+
+def readcommand():
+    """
+    read command from file
+    """
+    import pandas
+    if platform.system() == "Windows":
+        #read from input
+        sCommand = input()
+        sWriteInfo = pandas.DataFrame([['admin',sCommand],], columns=['userid', 'command'])
+        sWriteInfo.to_csv('command.csv', index=False)
+    try:
+        lstcommand = pandas.read_csv('command.csv')
+    except FileNotFoundError:
+        return
+    result = []
+    for i in range(len(lstcommand)):
+        sUser, sCommand = lstcommand['userid'][i], lstcommand['command'][i]
+        log.log_file("command", "read {0} {1}".format(sUser, sCommand))
+        result.append((sUser, sCommand))
+
+    if result:
+        sWriteInfo = pandas.DataFrame(None, columns=['userid', 'command'])
+        sWriteInfo.to_csv('command.csv', index=False)
+    return result
+
