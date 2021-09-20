@@ -1,5 +1,4 @@
 #-*- coding:utf-8 -*-
-import traceback
 import platform
 import time
 
@@ -38,10 +37,7 @@ if __name__ == "__main__":
                     if oFunc:
                         log.log_file("command", "{0} exec: {1}".format(sUser, sCommand))
                         oFunc(sCommand)
-
         except:
-            msg = traceback.format_exc()
-            print(msg)
-            log.log_file("err", msg)
+            log.StdErrLog()
         time.sleep(0.1)
 
